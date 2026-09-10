@@ -1,1 +1,53 @@
-<!doctype html><html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Boshqaruv paneli</title><link rel="stylesheet" href="/assets/style.css"></head><body class="dash-body"><header class="topbar"><div class="container topbar-inner"><a class="brand" href="/"><div class="logo">SSB</div><div><div class="brand-kicker">BUXORO VILOYATI</div><div class="brand-title">Boshqaruv paneli</div></div></a><a class="admin-link" href="/">Baholash sahifasi</a></div></header><main class="dash-content"><section class="panel"><h2>Muassasalar</h2><div id="instList">Yuklanmoqda...</div></section><section class="panel"><h2>Fikrlar va shikoyatlar</h2><div id="feedbackList">Yuklanmoqda...</div></section><section class="panel"><a class="btn primary" href="/api/admin/export.csv">CSV yuklab olish</a></section></main><script type="module" src="/assets/dashboard.js"></script></body></html>
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#071727">
+  <title>Boshqaruv paneli</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body class="dash-body">
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="/">
+        <div class="logo">SSB</div>
+        <div><div class="brand-kicker">BUXORO VILOYATI</div><div class="brand-title">Boshqaruv paneli</div></div>
+      </a>
+      <a class="admin-link" href="/">Baholash sahifasi</a>
+    </div>
+  </header>
+
+  <main class="dash-content">
+    <section class="panel admin-create-panel">
+      <div class="panel-title-row">
+        <div><h2>Muassasa qo‘shish</h2><p>Yangi muassasa qo‘shilganda unga avtomatik QR-kod yaratiladi.</p></div>
+      </div>
+      <form id="institutionForm" class="institution-form">
+        <div class="field-group"><label for="instName">Muassasa nomi</label><input id="instName" maxlength="180" required placeholder="Masalan: 1-son oilaviy poliklinika"></div>
+        <div class="field-group"><label for="instDistrict">Hudud / tuman</label><input id="instDistrict" maxlength="120" required placeholder="Masalan: Buxoro shahri"></div>
+        <div class="field-group"><label for="instAddress">Manzil <span>(ixtiyoriy)</span></label><input id="instAddress" maxlength="240" placeholder="Ko‘cha, uy raqami"></div>
+        <button id="addInstitutionBtn" class="btn primary admin-add-btn" type="submit">＋ Muassasa qo‘shish va QR yaratish</button>
+      </form>
+      <div id="institutionNotice" class="hidden"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-title-row">
+        <div><h2>Muassasalar va QR-kodlar</h2><p>QR skanerlanganda aynan shu muassasaning baholash sahifasi ochiladi.</p></div>
+      </div>
+      <div id="instList">Yuklanmoqda...</div>
+    </section>
+
+    <section class="panel">
+      <h2>Fikrlar va shikoyatlar</h2>
+      <div id="feedbackList">Yuklanmoqda...</div>
+    </section>
+
+    <section class="panel admin-export-row">
+      <a class="btn primary" href="/api/admin/export.csv">CSV yuklab olish</a>
+    </section>
+  </main>
+  <script type="module" src="/assets/dashboard.js"></script>
+</body>
+</html>
