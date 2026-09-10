@@ -1,15 +1,13 @@
 import './config.mjs';
 import { randomBytes } from 'node:crypto';
 import QRCode from 'qrcode';
-import JSZip from 'jszip';
 import { database, sql, normalizedName } from './database.mjs';
-import { randomToken, digest, equal, secret, sign, hashPassword, verifyPassword,
+import { randomToken, digest, equal, secret, sign, verifyPassword,
   clientToken, csrfFor, requestOrigin, publicBase, cookie } from './security.mjs';
 
 const services = ['Umumiy qabul', 'Terapevt qabuli', 'Pediatr qabuli', 'Kardiolog qabuli', 'Nevrolog qabuli', 'Laboratoriya', 'Diagnostika', 'Boshqa xizmat'];
 const codePattern = /^INST-BUX-[A-Z0-9-]{4,40}$/;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const dayPattern = /^\d{4}-\d{2}-\d{2}$/;
 export const dayInTashkent = (time = Date.now()) => new Date(time + 5 * 3600000).toISOString().slice(0, 10);
 class HttpError extends Error { constructor(status, message) { super(message); this.status = status; } }
 const fail = (status, message) => { throw new HttpError(status, message); };
@@ -70,15 +68,23 @@ async function qr(row, req, format = 'png') {
   const url = presentInstitution(row, req).feedbackUrl;
   return format === 'svg' ? QRCode.toString(url, { ...options, type: 'svg' }) : QRCode.toBuffer(url, options);
 }
+async function newInstitutionId(db) {
+  for (let attempt = 0; attempt < 8; attempt++) {
+    const id = `INST-BUX-${randomBytes(5).toString('hex').toUpperCase()}`;
+    const [exists] = await db.all(sql`SELECT id FROM institutions WHERE id=${id}`);
+    if (!exists) return id;
+  }
+  fail(500, 'Muassasa kodi yaratilmadi. Qayta urinib ko‘ring.');
+}
 function csvCell(value) { let text = String(value ?? ''); if (/^[\s]*[=+@-]|^[\t\r]/.test(text)) text = `'${text}`; return `"${text.replace(/"/g, '""')}"`; }
 
 export default async function application(req, res) {
   securityHeaders(res); res.setHeader('Cache-Control', 'no-store');
   try {
     secret(); const url = new URL(req.url, requestOrigin(req)); let route = url.pathname.replace(/^\/api\/?/, '').replace(/^\/+|\/+$/g, ''); const method = req.method;
-    if (!['GET','POST','PATCH'].includes(method)) fail(405, 'Bu amal qo‘llab-quvvatlanmaydi.'); if (method !== 'GET') guardOrigin(req);
+    if (!['GET','POST','PATCH','DELETE'].includes(method)) fail(405, 'Bu amal qo‘llab-quvvatlanmaydi.'); if (method !== 'GET') guardOrigin(req);
     const db = await database();
-    if (route === 'health' && method === 'GET') { await db.all(sql`SELECT 1 AS ok`); return json(res, 200, { ok: true, version: '2.0.0' }); }
+    if (route === 'health' && method === 'GET') { await db.all(sql`SELECT 1 AS ok`); return json(res, 200, { ok: true, version: '2.1.0' }); }
     if (route === 'institutions' && method === 'GET') {
       const rows = await db.all(sql`SELECT * FROM institutions WHERE active=1 ORDER BY name`); return json(res, 200, { institutions: rows.map(row => presentInstitution(row, req)), services });
     }
@@ -105,7 +111,43 @@ export default async function application(req, res) {
     if (route === 'auth/session' && method === 'GET') { const auth = await session(db, req); return json(res, 200, { username: process.env.ADMIN_USERNAME || 'admin', csrf: csrfFor(auth.token), publicBaseUrl: publicBase(req) }); }
     if (!route.startsWith('admin/')) fail(404, 'Sahifa topilmadi.');
     await session(db, req, method !== 'GET');
-    if (route === 'admin/institutions' && method === 'GET') { const rows = await db.all(sql`SELECT i.*, COUNT(f.id) AS feedback_count, AVG(f.rating) AS average_rating FROM institutions i LEFT JOIN feedbacks f ON f.institution_id=i.id GROUP BY i.id ORDER BY i.created_at DESC, i.name`); return json(res, 200, { institutions: rows.map(row => ({ ...presentInstitution(row, req), feedbackCount: Number(row.feedback_count), averageRating: row.average_rating === null ? null : Number(row.average_rating) })) }); }
+
+    if (route === 'admin/institutions' && method === 'GET') {
+      const rows = await db.all(sql`SELECT i.*, COUNT(f.id) AS feedback_count, AVG(f.rating) AS average_rating FROM institutions i LEFT JOIN feedbacks f ON f.institution_id=i.id GROUP BY i.id ORDER BY i.active DESC, i.created_at DESC, i.name`);
+      return json(res, 200, { institutions: rows.map(row => ({ ...presentInstitution(row, req), feedbackCount: Number(row.feedback_count), averageRating: row.average_rating === null ? null : Number(row.average_rating) })) });
+    }
+    if (route === 'admin/institutions' && method === 'POST') {
+      const data = await body(req);
+      const name = field(data.name, 'Muassasa nomi', 2, 180);
+      const district = field(data.district, 'Hudud', 2, 120);
+      const address = field(data.address ?? '', 'Manzil', 0, 240);
+      const nameKey = normalizedName(name, district);
+      const [duplicate] = await db.all(sql`SELECT id FROM institutions WHERE name_key=${nameKey}`);
+      if (duplicate) fail(409, 'Bu muassasa va hudud allaqachon mavjud.');
+      const id = await newInstitutionId(db); const createdAt = isoNow();
+      await db.all(sql`INSERT INTO institutions (id,name,district,address,name_key,active,created_at) VALUES (${id},${name},${district},${address},${nameKey},1,${createdAt})`);
+      const row = await institution(db, id);
+      return json(res, 201, { ok: true, institution: presentInstitution(row, req) });
+    }
+    const adminInstitutionMatch = route.match(/^admin\/institutions\/([^/]+)$/);
+    if (adminInstitutionMatch && method === 'PATCH') {
+      const row = await institution(db, adminInstitutionMatch[1]); const data = await body(req);
+      if (typeof data.active !== 'boolean') fail(400, 'Holat noto‘g‘ri.');
+      await db.all(sql`UPDATE institutions SET active=${data.active ? 1 : 0} WHERE id=${row.id}`);
+      const updated = await institution(db, row.id);
+      return json(res, 200, { ok: true, institution: presentInstitution(updated, req) });
+    }
+    if (adminInstitutionMatch && method === 'DELETE') {
+      const row = await institution(db, adminInstitutionMatch[1]);
+      const [usage] = await db.all(sql`SELECT COUNT(*) AS count FROM feedbacks WHERE institution_id=${row.id}`);
+      const count = Number(usage?.count || 0);
+      if (count > 0) {
+        await db.all(sql`UPDATE institutions SET active=0 WHERE id=${row.id}`);
+        return json(res, 200, { ok: true, archived: true, message: 'Muassasa baholash ro‘yxatidan olib tashlandi. Avvalgi fikrlar saqlandi.' });
+      }
+      await db.all(sql`DELETE FROM institutions WHERE id=${row.id}`);
+      return json(res, 200, { ok: true, deleted: true });
+    }
     if (route === 'admin/feedback' && method === 'GET') { const rows = await db.all(sql`SELECT f.*, i.name AS institution_name FROM feedbacks f JOIN institutions i ON i.id=f.institution_id ORDER BY f.created_at DESC LIMIT 500`); return json(res, 200, { feedback: rows }); }
     if (route === 'admin/export.csv' && method === 'GET') { const rows = await db.all(sql`SELECT f.*,i.name AS institution_name,i.district FROM feedbacks f JOIN institutions i ON i.id=f.institution_id ORDER BY f.created_at DESC`); const header = ['Sana','Muassasa','Hudud','Shifokor','Xizmat','Baho','Izoh','Shikoyat','Ism-familiya','Telefon']; const lines = [header.map(csvCell).join(',')]; for (const row of rows) lines.push([row.created_at,row.institution_name,row.district,row.doctor,row.service,row.rating,row.comment,row.is_complaint?'Ha':'Yo‘q',row.citizen_name,row.citizen_phone].map(csvCell).join(',')); res.statusCode = 200; res.setHeader('Content-Type','text/csv; charset=utf-8'); res.setHeader('Content-Disposition','attachment; filename="buxoro-feedback.csv"'); return res.end('\ufeff'+lines.join('\n')); }
     fail(404, 'Sahifa topilmadi.');
