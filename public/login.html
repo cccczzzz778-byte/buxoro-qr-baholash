@@ -1,1 +1,31 @@
-<!doctype html><html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101114"><title>Tizimga kirish</title><link rel="stylesheet" href="/assets/style.css"><link rel="stylesheet" href="/assets/three-d.css"></head><body class="login-body"><main class="login-wrap"><section class="login-card"><a class="brand" href="/"><div class="logo">SSB</div><div><div class="brand-kicker">BUXORO VILOYATI</div><div class="brand-title">Tibbiy xizmatni baholash</div></div></a><h1>Tizimga kirish</h1><p class="muted">Boshqarma yoki hudud uchun berilgan login-parol bilan kiring.</p><form id="loginForm"><div class="field-group"><label for="username">Login</label><input id="username" autocomplete="username" required></div><div class="field-group"><label for="password">Parol</label><input id="password" type="password" autocomplete="current-password" required></div><label class="check-row"><input id="remember" type="checkbox"><span>Eslab qolish</span></label><div id="loginError" class="form-error hidden"></div><button class="btn primary full" type="submit">Kirish</button></form></section></main><script type="module" src="/assets/login.js"></script></body></html>
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#041426">
+  <meta name="description" content="Buxoro SSB QR baholash tizimiga xavfsiz kirish">
+  <title>Buxoro SSB — Tizimga kirish</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="stylesheet" href="/assets/three-d.css">
+  <link rel="stylesheet" href="/assets/professional.css">
+</head>
+<body class="login-body">
+<main class="login-wrap">
+  <section class="login-card" aria-labelledby="loginTitle">
+    <a class="brand" href="/"><div class="logo">SSB</div><div><div class="brand-kicker">BUXORO VILOYATI</div><div class="brand-title">Tibbiy xizmatni baholash</div></div></a>
+    <span class="pro-eyebrow" style="margin-top:28px">Himoyalangan kirish</span>
+    <h1 id="loginTitle">Tizimga kirish</h1>
+    <p class="muted">Boshqarma yoki hudud uchun berilgan login-parol bilan kiring.</p>
+    <form id="loginForm" autocomplete="on">
+      <div class="field-group"><label for="username">Login</label><input id="username" autocomplete="username" inputmode="text" required autofocus></div>
+      <div class="field-group"><label for="password">Parol</label><div class="pro-password-wrap"><input id="password" type="password" autocomplete="current-password" required><button id="togglePassword" class="pro-password-toggle" type="button" aria-label="Parolni ko‘rsatish">Ko‘rsatish</button></div></div>
+      <label class="check-row"><input id="remember" type="checkbox"><span>7 kun davomida eslab qolish</span></label>
+      <div id="loginError" class="form-error hidden" role="alert"></div>
+      <button id="loginButton" class="btn primary full" type="submit">Kirish</button>
+    </form>
+    <div class="pro-login-foot">Kirish ma’lumotlari faqat vakolatli xodimlar uchun. Hudud loginlari boshqa hudud ma’lumotlarini ko‘ra olmaydi.</div>
+  </section>
+</main>
+<script type="module" src="/assets/login.js"></script>
+</body></html>
