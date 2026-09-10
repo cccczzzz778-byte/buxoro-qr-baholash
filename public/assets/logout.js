@@ -63,6 +63,32 @@ style.textContent=`
   border-color:rgba(255,114,137,.58)!important;
   background:linear-gradient(180deg,rgba(135,32,51,.82),rgba(86,19,34,.9))!important;
 }
+.pro-kpi.pro-kpi-action{
+  cursor:pointer;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,filter .18s ease;
+}
+.pro-kpi.pro-kpi-action:hover{
+  transform:translateY(-3px);
+  border-color:rgba(255,106,132,.62)!important;
+  box-shadow:0 20px 48px rgba(0,8,24,.35),0 0 26px rgba(255,80,115,.12)!important;
+  filter:brightness(1.05);
+}
+.pro-kpi.pro-kpi-action:focus-visible{
+  outline:3px solid rgba(255,105,132,.35);
+  outline-offset:3px;
+}
+.pro-kpi.pro-kpi-action small::after{
+  content:' • Bosib ko‘ring';
+  color:#ff9daf;
+  font-weight:800;
+}
+.feedback-focus-pulse{
+  animation:feedbackFocusPulse .7s ease;
+}
+@keyframes feedbackFocusPulse{
+  0%{box-shadow:0 0 0 0 rgba(255,95,124,.34)}
+  100%{box-shadow:0 0 0 16px rgba(255,95,124,0)}
+}
 @media(max-width:900px){
   .topbar .topbar-inner{width:calc(100% - 18px);gap:10px}
   .topbar .brand-title{max-width:210px}
@@ -104,4 +130,53 @@ if(host&&!document.querySelector('#logoutBtn')){
     setTimeout(()=>{button.disabled=false;button.textContent=old},3000);
   });
   host.appendChild(button);
+}
+
+const kpiHost=document.querySelector('#adminKpis');
+function markComplaintKpi(){
+  if(!kpiHost)return;
+  [...kpiHost.querySelectorAll('.pro-kpi')].forEach(card=>{
+    if(card.querySelector('span')?.textContent?.trim()==='Shikoyatlar'){
+      card.classList.add('pro-kpi-action');
+      card.setAttribute('role','button');
+      card.setAttribute('tabindex','0');
+      card.setAttribute('aria-label','Shikoyatlarni ko‘rsatish');
+      card.title='Shikoyatlarni ko‘rsatish';
+    }
+  });
+}
+function openComplaints(){
+  const type=document.querySelector('#feedbackType');
+  const rating=document.querySelector('#feedbackRating');
+  const search=document.querySelector('#feedbackSearch');
+  if(!type)return;
+  type.value='complaint';
+  if(rating)rating.value='all';
+  if(search)search.value='';
+  type.dispatchEvent(new Event('change',{bubbles:true}));
+  if(rating)rating.dispatchEvent(new Event('change',{bubbles:true}));
+  if(search)search.dispatchEvent(new Event('input',{bubbles:true}));
+  const panel=type.closest('.panel');
+  if(panel){
+    panel.classList.remove('feedback-focus-pulse');
+    void panel.offsetWidth;
+    panel.classList.add('feedback-focus-pulse');
+    panel.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  history.replaceState(null,'',location.pathname+location.search+'#shikoyatlar');
+}
+if(kpiHost){
+  markComplaintKpi();
+  new MutationObserver(markComplaintKpi).observe(kpiHost,{childList:true,subtree:true});
+  kpiHost.addEventListener('click',event=>{
+    const card=event.target.closest('.pro-kpi-action');
+    if(card)openComplaints();
+  });
+  kpiHost.addEventListener('keydown',event=>{
+    const card=event.target.closest('.pro-kpi-action');
+    if(card&&(event.key==='Enter'||event.key===' ')){
+      event.preventDefault();
+      openComplaints();
+    }
+  });
 }
