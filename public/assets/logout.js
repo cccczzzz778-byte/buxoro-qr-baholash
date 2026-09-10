@@ -63,32 +63,84 @@ style.textContent=`
   border-color:rgba(255,114,137,.58)!important;
   background:linear-gradient(180deg,rgba(135,32,51,.82),rgba(86,19,34,.9))!important;
 }
-.pro-kpi.pro-kpi-action{
+
+/* Admin KPI kartalarining barchasi ishlaydi */
+#adminKpis .pro-kpi.pro-kpi-action{
+  position:relative;
   cursor:pointer;
+  user-select:none;
+  padding-bottom:27px!important;
   transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,filter .18s ease;
 }
-.pro-kpi.pro-kpi-action:hover{
+#adminKpis .pro-kpi.pro-kpi-action:hover,
+#adminKpis .pro-kpi.pro-kpi-action:focus-visible{
   transform:translateY(-3px);
-  border-color:rgba(255,106,132,.62)!important;
-  box-shadow:0 20px 48px rgba(0,8,24,.35),0 0 26px rgba(255,80,115,.12)!important;
-  filter:brightness(1.05);
+  border-color:rgba(98,188,255,.58)!important;
+  box-shadow:0 18px 42px rgba(0,15,42,.34),0 0 24px rgba(43,151,255,.10)!important;
+  filter:brightness(1.06);
+  outline:none;
 }
-.pro-kpi.pro-kpi-action:focus-visible{
-  outline:3px solid rgba(255,105,132,.35);
-  outline-offset:3px;
+#adminKpis .pro-kpi.pro-kpi-action::after{
+  content:'BOSIB KO‘RING';
+  position:absolute;
+  right:12px;
+  bottom:8px;
+  font-size:8px;
+  line-height:1;
+  font-weight:900;
+  letter-spacing:.055em;
+  color:#7fb7e4;
+  opacity:.84;
 }
-.pro-kpi.pro-kpi-action small::after{
-  content:' • Bosib ko‘ring';
-  color:#ff9daf;
-  font-weight:800;
+#adminKpis .pro-kpi.pro-kpi-action.is-danger::after{color:#ff93a5}
+
+/* Ma'lumotlar sahifani haddan tashqari uzaytirmaydi */
+#instList .institution-admin-grid,
+#districtUserList .district-user-grid,
+#feedbackList .table-wrap,
+#institutionTable.table-wrap,
+#rankingTable.table-wrap,
+#districtOwnList .district-own-grid,
+#complaintsBody .table-wrap{
+  scrollbar-width:thin;
+  scrollbar-color:rgba(77,157,224,.45) rgba(3,19,34,.25);
 }
-.feedback-focus-pulse{
-  animation:feedbackFocusPulse .7s ease;
+#instList .institution-admin-grid{max-height:590px;overflow:auto;padding-right:5px}
+#districtUserList .district-user-grid{max-height:450px;overflow:auto;padding-right:5px}
+#feedbackList .table-wrap{max-height:560px;overflow:auto}
+#institutionTable.table-wrap{max-height:500px;overflow:auto}
+#rankingTable.table-wrap{max-height:520px;overflow:auto}
+#districtOwnList .district-own-grid{max-height:520px;overflow:auto;padding-right:5px}
+#complaintsBody .table-wrap{max-height:520px;overflow:auto}
+
+#feedbackList table thead,
+#institutionTable table thead,
+#rankingTable table thead,
+#complaintsBody table thead{position:sticky;top:0;z-index:5}
+
+.institution-card-copy{min-width:0}
+.institution-card-copy h3{
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+  line-height:1.28;
 }
-@keyframes feedbackFocusPulse{
-  0%{box-shadow:0 0 0 0 rgba(255,95,124,.34)}
-  100%{box-shadow:0 0 0 16px rgba(255,95,124,0)}
+.institution-card-copy p{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.institution-meta{max-width:100%;overflow:hidden}
+.institution-meta span{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#feedbackList td{max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#feedbackList td .pro-comment{max-width:270px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.analytics-table td:first-child{max-width:360px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.district-own-card h3{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.district-own-meta{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+
+.ui-focus-pulse{animation:uiFocusPulse .75s ease}
+@keyframes uiFocusPulse{
+  0%{box-shadow:0 0 0 0 rgba(43,151,255,.38)}
+  100%{box-shadow:0 0 0 15px rgba(43,151,255,0)}
 }
+
 @media(max-width:900px){
   .topbar .topbar-inner{width:calc(100% - 18px);gap:10px}
   .topbar .brand-title{max-width:210px}
@@ -96,6 +148,8 @@ style.textContent=`
   .topbar .admin-top-actions::-webkit-scrollbar{display:none}
   .topbar .admin-top-actions .admin-link{height:36px!important;min-height:36px!important;padding:0 11px!important;font-size:11px!important}
   .topbar .admin-top-actions .pro-user-chip{height:36px;min-height:36px!important;font-size:11px!important}
+  #instList .institution-admin-grid{max-height:64vh}
+  #feedbackList .table-wrap,#institutionTable.table-wrap,#complaintsBody .table-wrap{max-height:58vh}
 }
 @media(max-width:620px){
   .topbar .topbar-inner{align-items:center;min-height:64px}
@@ -105,9 +159,101 @@ style.textContent=`
   .topbar .admin-top-actions .pro-user-chip{display:none!important}
   .topbar .admin-top-actions .admin-link{padding:0 9px!important;font-size:10px!important;border-radius:9px!important}
   .topbar .admin-top-actions #logoutBtn{min-width:64px}
+  #adminKpis .pro-kpi.pro-kpi-action{padding-bottom:24px!important}
+  #adminKpis .pro-kpi.pro-kpi-action::after{font-size:7px;right:9px;bottom:7px}
+  .institution-admin-card{min-height:0!important}
+  .institution-card-copy h3{-webkit-line-clamp:1}
+  .institution-actions{gap:6px!important}
+  .institution-actions .btn{font-size:10px!important;padding:8px 9px!important;min-height:34px!important}
+  #districtUserList .district-user-grid{max-height:50vh}
+  #rankingTable.table-wrap{max-height:55vh}
 }
 `;
 document.head.appendChild(style);
+
+function pulseAndScroll(target){
+  if(!target)return;
+  target.classList.remove('ui-focus-pulse');
+  void target.offsetWidth;
+  target.classList.add('ui-focus-pulse');
+  target.scrollIntoView({behavior:'smooth',block:'start'});
+  setTimeout(()=>target.classList.remove('ui-focus-pulse'),900);
+}
+function setSelect(selector,value){
+  const el=document.querySelector(selector);
+  if(!el)return;
+  el.value=value;
+  el.dispatchEvent(new Event('change',{bubbles:true}));
+}
+function clearSearch(selector){
+  const el=document.querySelector(selector);
+  if(!el)return;
+  el.value='';
+  el.dispatchEvent(new Event('input',{bubbles:true}));
+}
+function openAdminSection(index){
+  if(index===0){
+    clearSearch('#instSearch');
+    setSelect('#instFilterDistrict','all');
+    setSelect('#instFilterStatus','all');
+    pulseAndScroll(document.querySelector('#instList')?.closest('.panel'));
+    return;
+  }
+  if(index===1){
+    clearSearch('#feedbackSearch');
+    setSelect('#feedbackType','all');
+    setSelect('#feedbackRating','all');
+    pulseAndScroll(document.querySelector('#feedbackList')?.closest('.panel'));
+    return;
+  }
+  if(index===2){
+    clearSearch('#feedbackSearch');
+    setSelect('#feedbackType','complaint');
+    setSelect('#feedbackRating','all');
+    pulseAndScroll(document.querySelector('#feedbackList')?.closest('.panel'));
+    return;
+  }
+  if(index===3){
+    clearSearch('#instSearch');
+    setSelect('#instFilterDistrict','all');
+    setSelect('#instFilterStatus','active');
+    pulseAndScroll(document.querySelector('#instList')?.closest('.panel'));
+    return;
+  }
+  if(index===4){
+    pulseAndScroll(document.querySelector('.district-access-panel'));
+  }
+}
+function markAdminKpis(){
+  const root=document.querySelector('#adminKpis');
+  if(!root)return;
+  const titles=['Muassasalarni ko‘rish','Barcha baholarni ko‘rish','Shikoyatlarni ko‘rish','Faol QR muassasalarni ko‘rish','Hudud loginlarini ko‘rish'];
+  [...root.querySelectorAll('.pro-kpi')].forEach((card,index)=>{
+    if(card.classList.contains('pro-skeleton'))return;
+    card.classList.add('pro-kpi-action');
+    card.dataset.kpiIndex=String(index);
+    card.setAttribute('role','button');
+    card.setAttribute('tabindex','0');
+    card.setAttribute('aria-label',titles[index]||'Batafsil ko‘rish');
+    card.title=titles[index]||'Batafsil ko‘rish';
+  });
+}
+const kpiHost=document.querySelector('#adminKpis');
+if(kpiHost){
+  markAdminKpis();
+  new MutationObserver(markAdminKpis).observe(kpiHost,{childList:true,subtree:true});
+  kpiHost.addEventListener('click',event=>{
+    const card=event.target.closest('.pro-kpi-action');
+    if(card)openAdminSection(Number(card.dataset.kpiIndex));
+  });
+  kpiHost.addEventListener('keydown',event=>{
+    const card=event.target.closest('.pro-kpi-action');
+    if(card&&(event.key==='Enter'||event.key===' ')){
+      event.preventDefault();
+      openAdminSection(Number(card.dataset.kpiIndex));
+    }
+  });
+}
 
 if(host&&!document.querySelector('#logoutBtn')){
   const button=document.createElement('button');
@@ -130,53 +276,4 @@ if(host&&!document.querySelector('#logoutBtn')){
     setTimeout(()=>{button.disabled=false;button.textContent=old},3000);
   });
   host.appendChild(button);
-}
-
-const kpiHost=document.querySelector('#adminKpis');
-function markComplaintKpi(){
-  if(!kpiHost)return;
-  [...kpiHost.querySelectorAll('.pro-kpi')].forEach(card=>{
-    if(card.querySelector('span')?.textContent?.trim()==='Shikoyatlar'){
-      card.classList.add('pro-kpi-action');
-      card.setAttribute('role','button');
-      card.setAttribute('tabindex','0');
-      card.setAttribute('aria-label','Shikoyatlarni ko‘rsatish');
-      card.title='Shikoyatlarni ko‘rsatish';
-    }
-  });
-}
-function openComplaints(){
-  const type=document.querySelector('#feedbackType');
-  const rating=document.querySelector('#feedbackRating');
-  const search=document.querySelector('#feedbackSearch');
-  if(!type)return;
-  type.value='complaint';
-  if(rating)rating.value='all';
-  if(search)search.value='';
-  type.dispatchEvent(new Event('change',{bubbles:true}));
-  if(rating)rating.dispatchEvent(new Event('change',{bubbles:true}));
-  if(search)search.dispatchEvent(new Event('input',{bubbles:true}));
-  const panel=type.closest('.panel');
-  if(panel){
-    panel.classList.remove('feedback-focus-pulse');
-    void panel.offsetWidth;
-    panel.classList.add('feedback-focus-pulse');
-    panel.scrollIntoView({behavior:'smooth',block:'start'});
-  }
-  history.replaceState(null,'',location.pathname+location.search+'#shikoyatlar');
-}
-if(kpiHost){
-  markComplaintKpi();
-  new MutationObserver(markComplaintKpi).observe(kpiHost,{childList:true,subtree:true});
-  kpiHost.addEventListener('click',event=>{
-    const card=event.target.closest('.pro-kpi-action');
-    if(card)openComplaints();
-  });
-  kpiHost.addEventListener('keydown',event=>{
-    const card=event.target.closest('.pro-kpi-action');
-    if(card&&(event.key==='Enter'||event.key===' ')){
-      event.preventDefault();
-      openComplaints();
-    }
-  });
 }
