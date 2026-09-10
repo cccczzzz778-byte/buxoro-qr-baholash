@@ -15,18 +15,30 @@
         <div class="logo">SSB</div>
         <div><div class="brand-kicker">BUXORO VILOYATI</div><div class="brand-title">Boshqaruv paneli</div></div>
       </a>
-      <a class="admin-link" href="/">Baholash sahifasi</a>
+      <div class="admin-top-actions">
+        <a class="admin-link analytics-link" href="/analytics.html">Tahlil dashboardi</a>
+        <a class="admin-link" href="/">Baholash sahifasi</a>
+      </div>
     </div>
   </header>
 
   <main class="dash-content">
+    <section class="panel analytics-promo">
+      <div>
+        <span class="admin-kicker">BOSHQARMA MONITORINGI</span>
+        <h2>13 ta hudud — OP va OSHP kesimida</h2>
+        <p>Har bir hududning OP/OSHP baholari va Boshqarma uchun umumiy hududlar reytingini ko‘ring.</p>
+      </div>
+      <a class="btn primary" href="/analytics.html">Dashboardni ochish</a>
+    </section>
+
     <section class="panel admin-create-panel">
       <div class="panel-title-row">
         <div><h2>Muassasa qo‘shish</h2><p>Yangi muassasa qo‘shilganda unga avtomatik QR-kod yaratiladi.</p></div>
       </div>
       <form id="institutionForm" class="institution-form">
-        <div class="field-group"><label for="instName">Muassasa nomi</label><input id="instName" maxlength="180" required placeholder="Masalan: 1-son oilaviy poliklinika"></div>
-        <div class="field-group"><label for="instDistrict">Hudud / tuman</label><input id="instDistrict" maxlength="120" required placeholder="Masalan: Buxoro shahri"></div>
+        <div class="field-group"><label for="instName">Muassasa nomi</label><input id="instName" maxlength="180" required placeholder="Masalan: 1-son oilaviy poliklinika yoki 12-son OSHP"></div>
+        <div class="field-group"><label for="instDistrict">Hudud / tuman</label><select id="instDistrict" required><option value="">Hududni tanlang</option><option>Buxoro shahri</option><option>Kogon shahri</option><option>Buxoro tumani</option><option>Vobkent tumani</option><option>G‘ijduvon tumani</option><option>Jondor tumani</option><option>Kogon tumani</option><option>Olot tumani</option><option>Peshku tumani</option><option>Qorako‘l tumani</option><option>Qorovulbozor tumani</option><option>Romitan tumani</option><option>Shofirkon tumani</option></select></div>
         <div class="field-group"><label for="instAddress">Manzil <span>(ixtiyoriy)</span></label><input id="instAddress" maxlength="240" placeholder="Ko‘cha, uy raqami"></div>
         <button id="addInstitutionBtn" class="btn primary admin-add-btn" type="submit">＋ Muassasa qo‘shish va QR yaratish</button>
       </form>
