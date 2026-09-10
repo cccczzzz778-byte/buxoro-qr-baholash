@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#071727" />
+  <title>Buxoro viloyati — Tibbiy xizmatni baholash</title>
+  <link rel="stylesheet" href="/assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="/" aria-label="Bosh sahifa">
+        <div class="logo">SSB</div>
+        <div><div class="brand-kicker">BUXORO VILOYATI</div><div class="brand-title">Tibbiy xizmatni baholash</div></div>
+      </a>
+      <a class="admin-link" href="/dashboard">Boshqaruv paneli</a>
+    </div>
+  </header>
+  <main>
+    <section id="feedbackSection" class="section feedback-section">
+      <div class="container rating-shell">
+        <div class="rating-page-card">
+          <div class="rating-topline"><button id="homeBtn" class="rating-home-btn" type="button">⌂ Bosh sahifa</button></div>
+          <div class="rating-heading">
+            <h2>Xizmat sifatini baholang</h2>
+            <p>Sizning fikringiz biz uchun muhim!</p>
+            <h3 id="selectedInstitutionName">Muassasani tanlang</h3>
+            <div id="selectedInstitutionDistrict" class="rating-muted"></div>
+          </div>
+          <div id="formError" class="form-error hidden" role="alert"></div>
+          <form id="feedbackForm" novalidate>
+            <input id="institutionId" type="hidden" />
+            <div class="rating-service-grid">
+              <div class="rating-field"><label for="institutionSelect">Muassasa</label><select id="institutionSelect"><option value="">Yuklanmoqda...</option></select></div>
+              <div class="rating-field"><label for="doctorName">Shifokor F.I.Sh.</label><input id="doctorName" type="text" placeholder="Masalan: Karimov Akmal Anvarovich" maxlength="120" required /></div>
+              <div class="rating-field"><label for="service">Xizmat turi</label><select id="service"><option>Umumiy qabul</option></select></div>
+            </div>
+            <div class="rating-question">
+              <div class="rating-question-title">Umumiy baho bering</div>
+              <div id="stars" class="mood-rating" role="radiogroup" aria-label="Baho">
+                <button type="button" class="mood mood-1" data-value="1" aria-checked="false"><span class="mood-face">😡</span><span>Juda yomon</span></button>
+                <button type="button" class="mood mood-2" data-value="2" aria-checked="false"><span class="mood-face">☹️</span><span>Yomon</span></button>
+                <button type="button" class="mood mood-3" data-value="3" aria-checked="false"><span class="mood-face">😐</span><span>O‘rtacha</span></button>
+                <button type="button" class="mood mood-4" data-value="4" aria-checked="false"><span class="mood-face">🙂</span><span>Yaxshi</span></button>
+                <button type="button" class="mood mood-5" data-value="5" aria-checked="false"><span class="mood-face">😄</span><span>A’lo</span></button>
+              </div>
+              <input id="rating" type="hidden" required />
+              <div id="ratingText" class="rating-choice-text">Bahoni tanlang</div>
+            </div>
+            <label class="complaint-switch-row">
+              <span class="switch-wrap"><input id="isComplaint" type="checkbox" /><span class="switch-ui"></span></span>
+              <span class="complaint-switch-copy"><b>Bu baho shikoyat / murojaat sifatida yuborilsin</b><small>(ixtiyoriy)</small></span>
+            </label>
+            <div id="complaintContactPanel" class="complaint-contact-panel hidden">
+              <div class="rating-field"><label for="citizenName">Ism-familiya <span>(ixtiyoriy)</span></label><div class="input-icon-wrap"><span class="input-icon">👤</span><input id="citizenName" type="text" maxlength="120" placeholder="Masalan: Aliyev Jamshid" /></div></div>
+              <div class="rating-field"><label for="citizenPhone">Telefon raqami <span>(ixtiyoriy)</span></label><div class="input-icon-wrap"><span class="input-icon">☎</span><input id="citizenPhone" type="tel" maxlength="30" placeholder="+998 90 123 45 67" /></div></div>
+              <div class="rating-field"><label for="comment">Izoh / shikoyat <span>(ixtiyoriy)</span></label><textarea id="comment" rows="4" maxlength="1000" placeholder="Muammo haqida qisqacha yozing..."></textarea></div>
+            </div>
+            <div id="ordinaryComment" class="rating-field ordinary-comment"><label for="commentRegular">Fikringiz <span>(ixtiyoriy)</span></label><textarea id="commentRegular" rows="4" maxlength="1000" placeholder="Xizmat sifati haqida fikringizni yozing..."></textarea></div>
+            <label class="rating-consent-row"><input id="consent" type="checkbox" required /><span>Fikrim xizmat sifatini tahlil qilish maqsadida saqlanishiga roziman.</span></label>
+            <input id="website" class="honeypot" tabindex="-1" autocomplete="off" />
+            <button id="submitFeedback" class="rating-submit" type="submit"><span class="send-icon">➤</span> Yuborish</button>
+          </form>
+        </div>
+        <div class="rating-info-strip"><div class="rating-shield">✓</div><div><b>Sizning fikringiz xizmat sifatini yaxshilashga yordam beradi!</b><p>Oddiy baholash anonim. Shikoyat bo‘lsa, ism va telefonni ixtiyoriy qoldirishingiz mumkin.</p></div></div>
+      </div>
+    </section>
+    <section id="successSection" class="section hidden"><div class="container narrow"><div class="success-card"><div class="success-icon">✓</div><h2>Rahmat!</h2><p>Fikringiz muvaffaqiyatli qabul qilindi.</p><p id="receiptId" class="muted"></p><button id="newFeedbackBtn" class="btn primary">Yana baholash</button></div></div></section>
+  </main>
+  <script type="module" src="/assets/app.js"></script>
+</body>
+</html>
