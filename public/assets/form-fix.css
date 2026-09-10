@@ -1,0 +1,5 @@
+.input-icon-wrap{position:relative;width:100%}
+.input-icon-wrap .input-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);z-index:2;width:22px;text-align:center;line-height:1;pointer-events:none;user-select:none}
+.rating-field .input-icon-wrap input{width:100%;padding-left:50px!important;padding-right:14px!important}
+.rating-field .input-icon-wrap input::placeholder{padding-left:0}
+@media(max-width:760px){.input-icon-wrap .input-icon{left:14px}.rating-field .input-icon-wrap input{padding-left:48px!important}}
