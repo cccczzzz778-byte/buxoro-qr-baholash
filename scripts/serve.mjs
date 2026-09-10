@@ -4,6 +4,7 @@ import { resolve, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import application, { securityHeaders } from '../server/application.mjs';
 import districtApplication from '../server/district-application.mjs';
+import authAnalyticsApplication from '../server/auth-analytics-application.mjs';
 import { closeDatabase, database } from '../server/database.mjs';
 import { secret } from '../server/security.mjs';
 const root = fileURLToPath(new URL('../public/', import.meta.url));
@@ -12,6 +13,7 @@ export function createAppServer() {
   return createServer(async (req, res) => {
     try {
       const url = new URL(req.url, 'http://localhost');
+      if (url.pathname.startsWith('/api/auth/') || url.pathname.startsWith('/api/analytics/')) return authAnalyticsApplication(req,res);
       if (url.pathname.startsWith('/api/district/')) return districtApplication(req,res);
       if (url.pathname.startsWith('/api/')) return application(req,res);
       if (/^\/qr\/[^/]+\.(png|svg)$/.test(url.pathname)) {
