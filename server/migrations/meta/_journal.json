@@ -1,0 +1,1 @@
+{"version":"7","dialect":"postgresql","entries":[{"idx":0,"version":"7","when":1789000000000,"tag":"0000_initial","breakpoints":true},{"idx":1,"version":"7","when":1789000001000,"tag":"0001_complaint_contacts","breakpoints":true}]}
