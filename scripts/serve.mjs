@@ -6,6 +6,7 @@ import application, { securityHeaders } from '../server/application.mjs';
 import districtApplication from '../server/district-application.mjs';
 import authAnalyticsApplication from '../server/auth-analytics-application.mjs';
 import adminFeedbackDelete from '../server/admin-feedback-delete.mjs';
+import analyticsComplaints from '../server/analytics-complaints.mjs';
 import { closeDatabase, database } from '../server/database.mjs';
 import { secret } from '../server/security.mjs';
 const root = fileURLToPath(new URL('../public/', import.meta.url));
@@ -15,6 +16,7 @@ export function createAppServer() {
     try {
       const url = new URL(req.url, 'http://localhost');
       if (/^\/api\/admin\/feedback\/[^/]+\/?$/.test(url.pathname) && req.method === 'DELETE') return adminFeedbackDelete(req,res);
+      if (url.pathname === '/api/analytics/complaints' || url.pathname === '/api/analytics/complaints/') return analyticsComplaints(req,res);
       if (url.pathname.startsWith('/api/auth/') || url.pathname.startsWith('/api/analytics/')) return authAnalyticsApplication(req,res);
       if (url.pathname.startsWith('/api/district/')) return districtApplication(req,res);
       if (url.pathname.startsWith('/api/')) return application(req,res);
