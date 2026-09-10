@@ -1,5 +1,6 @@
 .input-icon-wrap{position:relative;width:100%}
-.input-icon-wrap .input-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);z-index:2;width:22px;text-align:center;line-height:1;pointer-events:none;user-select:none}
-.rating-field .input-icon-wrap input{width:100%;padding-left:50px!important;padding-right:14px!important}
+.input-icon-wrap .input-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);z-index:2;width:20px;height:20px;display:grid;place-items:center;pointer-events:none;user-select:none;color:#7fb9ef}
+.input-icon-wrap .input-icon svg{display:block;width:20px;height:20px;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
+.rating-field .input-icon-wrap input{width:100%;padding-left:48px!important;padding-right:14px!important}
 .rating-field .input-icon-wrap input::placeholder{padding-left:0}
-@media(max-width:760px){.input-icon-wrap .input-icon{left:14px}.rating-field .input-icon-wrap input{padding-left:48px!important}}
+@media(max-width:760px){.input-icon-wrap .input-icon{left:14px;width:19px;height:19px}.input-icon-wrap .input-icon svg{width:19px;height:19px}.rating-field .input-icon-wrap input{padding-left:45px!important}}
