@@ -34,12 +34,9 @@ export function requestOrigin(req) {
   return `${https ? 'https' : 'http'}://${host}`;
 }
 export function publicBase(req) {
-  // Barcha QR-kod va baholash havolalari rasmiy Railway domeniga yo‘naltiriladi.
-  // PUBLIC_BASE_URL Railway variables'da yangilansa, u ustuvor bo‘ladi; aks holda yangi domen ishlatiladi.
-  const value = process.env.PUBLIC_BASE_URL || 'https://qr-baholash.up.railway.app';
-  const url = new URL(value);
-  if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password || url.pathname !== '/' || url.search || url.hash) throw new Error('PUBLIC_BASE_URL must be an http(s) origin, without a path.');
-  return url.origin;
+  // QR-kodlar Railway'dagi yangi rasmiy domen bilan yaratiladi.
+  // Eski PUBLIC_BASE_URL qiymati mavjud bo‘lsa ham eski domen QR ichiga qaytib qolmaydi.
+  return 'https://qr-baholash.up.railway.app';
 }
 export function cookie(req, token, seconds) {
   const secure = requestOrigin(req).startsWith('https:') ? '; Secure' : '';
