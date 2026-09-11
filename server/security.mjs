@@ -34,9 +34,11 @@ export function requestOrigin(req) {
   return `${https ? 'https' : 'http'}://${host}`;
 }
 export function publicBase(req) {
-  const value = process.env.PUBLIC_BASE_URL || requestOrigin(req);
+  // QR-kod va baholash havolalari doimo foydalanuvchi ochgan joriy domen asosida yaratiladi.
+  // Railway service/domain nomi keyinroq o‘zgarsa ham eski PUBLIC_BASE_URL QR ichida qolib ketmaydi.
+  const value = requestOrigin(req);
   const url = new URL(value);
-  if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password || url.pathname !== '/' || url.search || url.hash) throw new Error('PUBLIC_BASE_URL must be an http(s) origin, without a path.');
+  if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password || url.pathname !== '/' || url.search || url.hash) throw new Error('Public URL must be an http(s) origin, without a path.');
   return url.origin;
 }
 export function cookie(req, token, seconds) {
