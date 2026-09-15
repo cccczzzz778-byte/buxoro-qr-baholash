@@ -9,6 +9,7 @@ import adminFeedbackDelete from '../server/admin-feedback-delete.mjs';
 import adminStateInstitutions from '../server/admin-state-institutions.mjs';
 import analyticsComplaints from '../server/analytics-complaints.mjs';
 import feedbackSubmit from '../server/feedback-submit.mjs';
+import stateRegistration from '../server/state-registration.mjs';
 import { closeDatabase, database } from '../server/database.mjs';
 import { secret } from '../server/security.mjs';
 const root = fileURLToPath(new URL('../public/', import.meta.url));
@@ -21,6 +22,7 @@ export function createAppServer() {
       if ((url.pathname === '/api/admin/state-institutions' || url.pathname === '/api/admin/state-institutions/') && req.method === 'POST') return adminStateInstitutions(req,res);
       if ((url.pathname === '/api/feedback' || url.pathname === '/api/feedback/') && req.method === 'POST') return feedbackSubmit(req,res);
       if (url.pathname === '/api/analytics/complaints' || url.pathname === '/api/analytics/complaints/') return analyticsComplaints(req,res);
+      if (url.pathname === '/api/registrations' || url.pathname.startsWith('/api/registrations/')) return stateRegistration(req,res);
       if (url.pathname.startsWith('/api/auth/') || url.pathname.startsWith('/api/analytics/')) return authAnalyticsApplication(req,res);
       if (url.pathname.startsWith('/api/district/')) return districtApplication(req,res);
       if (url.pathname.startsWith('/api/')) return application(req,res);
@@ -34,6 +36,8 @@ export function createAppServer() {
       if (path === '/' || path === '/feedback' || /^\/(feedback|r)\/[^/]+\/?$/.test(path)) path = '/index.html';
       if (['/dashboard','/admin'].includes(path)) path = '/dashboard.html';
       if (path === '/login') path = '/login.html';
+      if (path === '/register' || path === '/registration') path = '/register.html';
+      if (path === '/registry' || path === '/registrations') path = '/registry.html';
       if (/^\/poster\/[^/]+\/?$/.test(path)) path = '/poster.html';
       const full = resolve(root, '.'+path);
       if (!full.startsWith(root) || path.includes('\0') || !types[extname(full)]) { res.writeHead(404); return res.end('Sahifa topilmadi'); }
