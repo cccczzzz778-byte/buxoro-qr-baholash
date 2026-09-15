@@ -12,40 +12,47 @@
   <link rel="stylesheet" href="/assets/three-d.css">
   <link rel="stylesheet" href="/assets/professional.css">
   <link rel="stylesheet" href="/assets/site-theme.css">
+  <link rel="stylesheet" href="/assets/state-institutions.css">
   <script defer src="/assets/site-theme.js"></script>
 </head>
 <body class="dash-body">
 <header class="topbar">
   <div class="container topbar-inner">
-    <a class="brand" href="/" aria-label="Baholash bosh sahifasi">
-      <div class="logo">SSB</div>
-      <div><div class="brand-kicker">BUXORO VILOYATI</div><div class="brand-title">Boshqaruv paneli</div></div>
-    </a>
-    <div class="admin-top-actions">
-      <span class="pro-user-chip"><i class="pro-user-dot"></i><span id="adminUserLabel">Boshqarma</span></span>
-      <a class="admin-link analytics-link" href="/analytics.html">Tahlil dashboardi</a>
-      <a class="admin-link" href="/">Baholash sahifasi</a>
-    </div>
+    <a class="brand" href="/" aria-label="Baholash bosh sahifasi"><div class="logo">SSB</div><div><div class="brand-kicker">BUXORO VILOYATI</div><div class="brand-title">Boshqaruv paneli</div></div></a>
+    <div class="admin-top-actions"><span class="pro-user-chip"><i class="pro-user-dot"></i><span id="adminUserLabel">Boshqarma</span></span><a class="admin-link analytics-link" href="/analytics.html">Tahlil dashboardi</a><a class="admin-link" href="/">Baholash sahifasi</a></div>
   </div>
 </header>
 <main class="dash-content">
-  <section class="pro-page-head" aria-labelledby="dashboardTitle">
-    <div>
-      <span class="pro-eyebrow">Markaziy boshqaruv</span>
-      <h1 id="dashboardTitle">Tibbiy xizmat sifatini boshqarish</h1>
-      <p>Muassasalar, QR-kodlar, hudud loginlari, baholar va murojaatlarni bir joydan boshqaring.</p>
-    </div>
-    <div id="lastUpdated" class="pro-sync">Ma’lumot yuklanmoqda...</div>
-  </section>
+  <section class="pro-page-head" aria-labelledby="dashboardTitle"><div><span class="pro-eyebrow">Markaziy boshqaruv</span><h1 id="dashboardTitle">Tibbiy xizmat sifatini boshqarish</h1><p>Muassasalar, QR-kodlar, hudud loginlari, baholar va murojaatlarni bir joydan boshqaring.</p></div><div id="lastUpdated" class="pro-sync">Ma’lumot yuklanmoqda...</div></section>
   <section id="adminKpis" class="pro-kpis" aria-label="Umumiy ko‘rsatkichlar"><article class="pro-kpi pro-skeleton"></article><article class="pro-kpi pro-skeleton"></article><article class="pro-kpi pro-skeleton"></article><article class="pro-kpi pro-skeleton"></article><article class="pro-kpi pro-skeleton"></article></section>
   <section class="panel analytics-promo"><div><span class="admin-kicker">BOSHQARMA MONITORINGI</span><h2>13 ta hudud — OP, OSHP va tibbiyot birlashmalari</h2><p>Hududlar reytingi, o‘rtacha baholar va murojaatlar dinamikasini alohida tahlil dashboardida ko‘ring.</p></div><a class="btn primary" href="/analytics.html">Tahlilni ochish</a></section>
   <section class="panel district-access-panel"><div class="panel-title-row"><div><h2>Hududlar uchun alohida kirish</h2><p>Har bir tuman yoki shaharga mustaqil login-parol bering. Hudud foydalanuvchisi faqat o‘ziga tegishli ma’lumotlarni ko‘radi.</p></div></div><form id="districtUserForm" class="institution-form district-user-form" autocomplete="off"><div class="field-group"><label for="userDistrict">Hudud</label><select id="userDistrict" required><option value="">Hududni tanlang</option><option>Buxoro shahri</option><option>Kogon shahri</option><option>Buxoro tumani</option><option>Vobkent tumani</option><option>G‘ijduvon tumani</option><option>Jondor tumani</option><option>Kogon tumani</option><option>Olot tumani</option><option>Peshku tumani</option><option>Qorako‘l tumani</option><option>Qorovulbozor tumani</option><option>Romitan tumani</option><option>Shofirkon tumani</option></select></div><div class="field-group"><label for="districtUsername">Login</label><input id="districtUsername" minlength="3" maxlength="40" required placeholder="Masalan: jondor" autocomplete="off"></div><div class="field-group"><label for="districtPassword">Parol</label><input id="districtPassword" type="password" minlength="10" maxlength="128" required placeholder="Kamida 10 belgi" autocomplete="new-password"></div><button id="saveDistrictUserBtn" class="btn primary admin-add-btn" type="submit">Loginni saqlash</button></form><div id="districtUserNotice" class="hidden" role="status"></div><div id="districtUserList" class="district-user-list"><div class="pro-skeleton"></div></div></section>
-  <section class="panel admin-create-panel"><div class="panel-title-row"><div><h2>Yangi muassasa va QR-kod</h2><p>Muassasa qo‘shilishi bilan unga avtomatik individual QR-kod va baholash havolasi yaratiladi.</p></div></div><form id="institutionForm" class="institution-form" autocomplete="off"><div class="field-group"><label for="instName">Muassasa nomi</label><input id="instName" maxlength="180" required placeholder="Masalan: 1-son oilaviy poliklinika"></div><div class="field-group"><label for="instDistrict">Hudud / tuman</label><select id="instDistrict" required><option value="">Hududni tanlang</option><option>Buxoro shahri</option><option>Kogon shahri</option><option>Buxoro tumani</option><option>Vobkent tumani</option><option>G‘ijduvon tumani</option><option>Jondor tumani</option><option>Kogon tumani</option><option>Olot tumani</option><option>Peshku tumani</option><option>Qorako‘l tumani</option><option>Qorovulbozor tumani</option><option>Romitan tumani</option><option>Shofirkon tumani</option></select></div><div class="field-group"><label for="instAddress">Manzil <span>(ixtiyoriy)</span></label><input id="instAddress" maxlength="240" placeholder="Ko‘cha, uy raqami"></div><button id="addInstitutionBtn" class="btn primary admin-add-btn" type="submit">＋ Qo‘shish va QR yaratish</button></form><div id="institutionNotice" class="hidden" role="status"></div></section>
+
+  <section class="panel state-institution-panel">
+    <div class="state-institution-head"><div><span class="admin-kicker">DAVLAT MUASSASALARI REYESTRI</span><h2>Davlat tibbiyot muassasasini qo‘shish</h2><p>Muassasani rekvizitlari bilan ro‘yxatdan o‘tkazing. Saqlangandan keyin muassasa baholash tizimiga qo‘shiladi va individual QR-kod avtomatik yaratiladi.</p></div><span class="state-badge">Davlat muassasasi</span></div>
+    <form id="stateInstitutionForm" class="state-institution-form" autocomplete="off">
+      <div class="field-group wide"><label for="stateInstName">Muassasa nomi</label><input id="stateInstName" maxlength="180" required placeholder="Masalan: Buxoro viloyat ko‘p tarmoqli tibbiyot markazi"></div>
+      <div class="field-group"><label for="stateInstType">Muassasa turi</label><select id="stateInstType" required><option value="Davlat tibbiyot muassasasi">Davlat tibbiyot muassasasi</option><option value="OP">OP — Oilaviy poliklinika</option><option value="OSHP">OSHP — Oilaviy shifokorlik punkti</option><option value="Tibbiyot birlashmasi">Tibbiyot birlashmasi</option><option value="Boshqa davlat muassasasi">Boshqa davlat muassasasi</option></select></div>
+      <div class="field-group"><label for="stateInstStir">STIR</label><input id="stateInstStir" inputmode="numeric" minlength="9" maxlength="14" required placeholder="9–14 ta raqam"></div>
+      <div class="field-group"><label for="stateInstDistrict">Hudud / tuman</label><select id="stateInstDistrict" required><option value="">Hududni tanlang</option><option>Buxoro shahri</option><option>Kogon shahri</option><option>Buxoro tumani</option><option>Vobkent tumani</option><option>G‘ijduvon tumani</option><option>Jondor tumani</option><option>Kogon tumani</option><option>Olot tumani</option><option>Peshku tumani</option><option>Qorako‘l tumani</option><option>Qorovulbozor tumani</option><option>Romitan tumani</option><option>Shofirkon tumani</option></select></div>
+      <div class="field-group wide"><label for="stateInstAddress">Manzil</label><input id="stateInstAddress" maxlength="240" placeholder="Ko‘cha, uy raqami"></div>
+      <div class="field-group"><label for="stateDirectorName">Rahbar F.I.Sh.</label><input id="stateDirectorName" maxlength="160" required placeholder="Rahbar ism-familiyasi"></div>
+      <div class="field-group"><label for="stateContactName">Mas’ul shaxs F.I.Sh.</label><input id="stateContactName" maxlength="160" required placeholder="Tizim uchun mas’ul xodim"></div>
+      <div class="field-group"><label for="statePhone">Telefon</label><input id="statePhone" type="tel" inputmode="tel" maxlength="30" required placeholder="+998 90 123 45 67"></div>
+      <div class="field-group"><label for="stateEmail">Email <span>(ixtiyoriy)</span></label><input id="stateEmail" type="email" maxlength="160" placeholder="example@ssv.uz"></div>
+      <button id="addStateInstitutionBtn" class="btn primary state-submit" type="submit">＋ Ro‘yxatdan o‘tkazish va QR yaratish</button>
+    </form>
+    <div class="state-form-note"><b>Avtomatik natija:</b> muassasa faol ro‘yxatga qo‘shiladi, reyestr qaydi yaratiladi va QR-kod yangi <b>qr-baholash.up.railway.app</b> domenidagi baholash sahifasiga yo‘naltiriladi.</div>
+    <div id="stateInstitutionNotice" class="hidden" role="status"></div>
+  </section>
+
+  <section class="panel admin-create-panel"><div class="panel-title-row"><div><h2>Yangi OP / OSHP va QR-kod</h2><p>Oddiy muassasa qo‘shilishi bilan unga avtomatik individual QR-kod va baholash havolasi yaratiladi.</p></div></div><form id="institutionForm" class="institution-form" autocomplete="off"><div class="field-group"><label for="instName">Muassasa nomi</label><input id="instName" maxlength="180" required placeholder="Masalan: 1-son oilaviy poliklinika"></div><div class="field-group"><label for="instDistrict">Hudud / tuman</label><select id="instDistrict" required><option value="">Hududni tanlang</option><option>Buxoro shahri</option><option>Kogon shahri</option><option>Buxoro tumani</option><option>Vobkent tumani</option><option>G‘ijduvon tumani</option><option>Jondor tumani</option><option>Kogon tumani</option><option>Olot tumani</option><option>Peshku tumani</option><option>Qorako‘l tumani</option><option>Qorovulbozor tumani</option><option>Romitan tumani</option><option>Shofirkon tumani</option></select></div><div class="field-group"><label for="instAddress">Manzil <span>(ixtiyoriy)</span></label><input id="instAddress" maxlength="240" placeholder="Ko‘cha, uy raqami"></div><button id="addInstitutionBtn" class="btn primary admin-add-btn" type="submit">＋ Qo‘shish va QR yaratish</button></form><div id="institutionNotice" class="hidden" role="status"></div></section>
   <section class="panel"><div class="panel-title-row"><div><h2>Muassasalar va QR-kodlar</h2><p>Faollik holati, QR, baholash havolasi va statistikasini boshqaring.</p></div></div><div class="pro-toolbar" aria-label="Muassasa filtrlari"><div class="field-group search"><label for="instSearch">Qidirish</label><input id="instSearch" type="search" placeholder="Muassasa nomi yoki kodini yozing..."></div><div class="field-group"><label for="instFilterDistrict">Hudud</label><select id="instFilterDistrict"><option value="all">Barcha hududlar</option></select></div><div class="field-group"><label for="instFilterStatus">Holat</label><select id="instFilterStatus"><option value="all">Barchasi</option><option value="active">Faol</option><option value="inactive">O‘chirilgan</option></select></div><div id="instVisibleCount" class="pro-count">0 ta</div></div><div id="instList"><div class="pro-skeleton"></div></div></section>
   <section class="panel"><div class="panel-title-row"><div><h2>Fikrlar va murojaatlar</h2><p>So‘nggi baholarni tezkor ko‘rib chiqing va kerakli murojaatni qidiring.</p></div><a class="btn primary" href="/api/admin/export.csv">CSV eksport</a></div><div class="pro-toolbar" aria-label="Fikr filtrlari"><div class="field-group search"><label for="feedbackSearch">Qidirish</label><input id="feedbackSearch" type="search" placeholder="Muassasa, shifokor, ism, telefon yoki izoh..."></div><div class="field-group"><label for="feedbackType">Turi</label><select id="feedbackType"><option value="all">Barcha baholar</option><option value="complaint">Faqat murojaatlar</option><option value="regular">Oddiy baholar</option></select></div><div class="field-group"><label for="feedbackRating">Baho</label><select id="feedbackRating"><option value="all">Barcha baholar</option><option value="5">5 yulduz</option><option value="4">4 yulduz</option><option value="3">3 yulduz</option><option value="2">2 yulduz</option><option value="1">1 yulduz</option></select></div><div id="feedbackVisibleCount" class="pro-count">0 ta</div></div><div id="feedbackList"><div class="pro-skeleton"></div></div></section>
 </main>
 <div id="toastStack" class="pro-toast-stack" aria-live="polite"></div>
 <script type="module" src="/assets/dashboard.js"></script>
+<script type="module" src="/assets/state-institutions.js"></script>
 <script type="module" src="/assets/admin-appeal-kpi.js"></script>
 <script type="module" src="/assets/logout.js"></script>
 </body>
