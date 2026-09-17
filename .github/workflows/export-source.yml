@@ -1,0 +1,21 @@
+name: Export Source ZIP
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create source ZIP
+        run: |
+          mkdir -p export
+          zip -r export/Buxoro-QR-Baholash-FINAL.zip . -x '.git/*' 'export/*'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Buxoro-QR-Baholash-FINAL
+          path: export/Buxoro-QR-Baholash-FINAL.zip
+          retention-days: 7
