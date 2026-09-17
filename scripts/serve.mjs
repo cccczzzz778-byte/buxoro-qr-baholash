@@ -13,7 +13,7 @@ import stateRegistration from '../server/state-registration.mjs';
 import { closeDatabase, database } from '../server/database.mjs';
 import { secret } from '../server/security.mjs';
 const root = fileURLToPath(new URL('../public/', import.meta.url));
-const types = { '.html': 'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css; charset=utf-8', '.svg':'image/svg+xml', '.png':'image/png', '.txt':'text/plain; charset=utf-8' };
+const types = { '.html': 'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css; charset=utf-8', '.svg':'image/svg+xml', '.png':'image/png', '.txt':'text/plain; charset=utf-8', '.webmanifest':'application/manifest+json' };
 export function createAppServer() {
   return createServer(async (req, res) => {
     try {
@@ -26,10 +26,7 @@ export function createAppServer() {
       if (url.pathname.startsWith('/api/auth/') || url.pathname.startsWith('/api/analytics/')) return authAnalyticsApplication(req,res);
       if (url.pathname.startsWith('/api/district/')) return districtApplication(req,res);
       if (url.pathname.startsWith('/api/')) return application(req,res);
-      if (/^\/qr\/[^/]+\.(png|svg)$/.test(url.pathname)) {
-        req.url = '/api/legacy-qr/' + url.pathname.slice(4) + url.search;
-        return application(req,res);
-      }
+      if (/^\/qr\/[^/]+\.(png|svg)$/.test(url.pathname)) { req.url = '/api/legacy-qr/' + url.pathname.slice(4) + url.search; return application(req,res); }
       securityHeaders(res);
       if (!['GET','HEAD'].includes(req.method)) { res.writeHead(405); return res.end(); }
       let path = decodeURIComponent(url.pathname);
@@ -43,7 +40,8 @@ export function createAppServer() {
       if (!full.startsWith(root) || path.includes('\0') || !types[extname(full)]) { res.writeHead(404); return res.end('Sahifa topilmadi'); }
       const data = await readFile(full);
       res.setHeader('Content-Type', types[extname(full)]);
-      res.setHeader('Cache-Control','no-cache');
+      const extension = extname(full);
+      res.setHeader('Cache-Control', extension === '.html' ? 'no-cache' : 'public, max-age=300, stale-while-revalidate=86400');
       res.end(req.method === 'HEAD' ? undefined : data);
     } catch { res.writeHead(404, {'Content-Type':'text/plain; charset=utf-8'}); res.end('Sahifa topilmadi'); }
   });
