@@ -23,7 +23,7 @@ export default async function adminStateInstitutions(req,res){
     const name=clean(data.name,'Muassasa nomi',2,180);const type=clean(data.type,'Muassasa turi',2,80);if(!types.includes(type))fail(400,'Muassasa turini ro‘yxatdan tanlang.');
     const stir=clean(data.stir,'STIR',9,14).replace(/\s/g,'');if(!/^\d{9,14}$/.test(stir))fail(400,'STIR faqat 9–14 ta raqamdan iborat bo‘lsin.');
     const district=clean(data.district,'Hudud',2,120);if(!districts.includes(district))fail(400,'Hududni ro‘yxatdan tanlang.');
-    const address=clean(data.address??'','Manzil',0,240);const director=clean(data.directorName,'Rahbar F.I.Sh.',2,160);const contact=clean(data.contactName,'Mas’ul shaxs F.I.Sh.',2,160);
+    const address=clean(data.address??'','Manzil',0,240);const director=clean(data.directorName,'Rahbar F.I.Sh.',2,160);const contact=clean(data.contactName??'','Mas’ul shaxs F.I.Sh.',0,160);
     const phone=clean(data.phone,'Telefon raqami',7,30);if(!/^[+0-9()\-\s]{7,30}$/.test(phone))fail(400,'Telefon raqamini to‘g‘ri kiriting.');const email=clean(data.email??'','Email',0,160);if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))fail(400,'Email manzilini to‘g‘ri kiriting.');
     const [stirExists]=await db.all(sql`SELECT id FROM institution_registrations WHERE stir=${stir}`);if(stirExists)fail(409,'Bu STIR bilan davlat muassasasi allaqachon ro‘yxatdan o‘tgan.');
     const nameKey=normalizedName(name,district);const [nameExists]=await db.all(sql`SELECT id FROM institutions WHERE name_key=${nameKey}`);if(nameExists)fail(409,'Bu muassasa va hudud allaqachon mavjud.');
