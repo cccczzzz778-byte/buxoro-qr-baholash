@@ -114,6 +114,13 @@ export default async function application(req, res) {
     if (!['GET','POST','PATCH','DELETE'].includes(method)) fail(405, 'Bu amal qo‘llab-quvvatlanmaydi.'); if (method !== 'GET') guardOrigin(req);
     const db = await database();
     if (route === 'health' && method === 'GET') { await db.all(sql`SELECT 1 AS ok`); return json(res, 200, { ok: true, version: '2.3.0' }); }
+    const directoryMatch = route.match(/^institutions\/([^/]+)\/directory$/);
+    if (directoryMatch && method === 'GET') {
+      const row = await institution(db, directoryMatch[1], true);
+      const departments = await db.all(sql`SELECT id,name FROM medical_departments WHERE institution_id=${row.id} ORDER BY name`);
+      const doctors = await db.all(sql`SELECT p.id,p.department_id,p.full_name,p.specialty FROM medical_doctors p JOIN medical_departments d ON d.id=p.department_id WHERE d.institution_id=${row.id} ORDER BY p.full_name`);
+      return json(res,200,{departments:departments.map(d=>({...d,doctors:doctors.filter(p=>p.department_id===d.id)}))});
+    }
     if (route === 'institutions' && method === 'GET') {
       const rows = await db.all(sql`SELECT * FROM institutions WHERE active=1 ORDER BY name`); return json(res, 200, { institutions: rows.map(row => presentInstitution(row, req)), services });
     }

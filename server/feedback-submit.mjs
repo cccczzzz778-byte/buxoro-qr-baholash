@@ -77,6 +77,15 @@ export default async function feedbackSubmit(req, res) {
     if (!institution.active) fail(410, 'Bu muassasada baholash vaqtincha to‘xtatilgan.');
 
     const doctor = field(data.doctor, 'Shifokor ismi', 2, 120);
+    let departmentId = null;
+    if (data.doctorId || data.departmentId) {
+      if(!/^[a-f0-9]{24}$/.test(String(data.doctorId||'')) || !/^[a-f0-9]{24}$/.test(String(data.departmentId||''))) fail(400,'Bo‘lim yoki shifokor tanlovi noto‘g‘ri.');
+      const [registered] = await db.all(sql`SELECT p.id,p.full_name FROM medical_doctors p
+        JOIN medical_departments d ON d.id=p.department_id
+        WHERE p.id=${data.doctorId} AND d.id=${data.departmentId} AND d.institution_id=${institution.id}`);
+      if(!registered || registered.full_name!==doctor) fail(400,'Tanlangan shifokor ushbu muassasaga tegishli emas.');
+      departmentId=data.departmentId;
+    }
     const service = field(data.service ?? 'Umumiy qabul', 'Xizmat turi', 1, 80);
     if (!services.includes(service)) fail(400, 'Xizmat turini ro‘yxatdan tanlang.');
     if (!Number.isInteger(data.rating) || data.rating < 1 || data.rating > 5) fail(400, '1 dan 5 gacha baho tanlang.');
@@ -91,7 +100,7 @@ export default async function feedbackSubmit(req, res) {
     if (isComplaint && !/^[+0-9()\-\s]{7,30}$/.test(citizenPhone)) fail(400, 'Telefon raqamini to‘g‘ri kiriting.');
 
     await rateLimit(db, req);
-    await db.all(sql`INSERT INTO feedbacks (id,institution_id,doctor,service,rating,comment,is_complaint,citizen_name,citizen_phone,status,day,created_at) VALUES (${data.id},${institution.id},${doctor},${service},${data.rating},${comment},${isComplaint ? 1 : 0},${citizenName},${citizenPhone},'new',${dayInTashkent()},${isoNow()}) ON CONFLICT DO NOTHING`);
+    await db.all(sql`INSERT INTO feedbacks (id,institution_id,doctor,department_id,service,rating,comment,is_complaint,citizen_name,citizen_phone,status,day,created_at) VALUES (${data.id},${institution.id},${doctor},${departmentId},${service},${data.rating},${comment},${isComplaint ? 1 : 0},${citizenName},${citizenPhone},'new',${dayInTashkent()},${isoNow()}) ON CONFLICT DO NOTHING`);
     return json(res, 201, { ok: true, id: data.id });
   } catch (error) {
     const status = error instanceof HttpError ? error.status : 500;

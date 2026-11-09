@@ -105,17 +105,69 @@ export default async function districtApplication(req, res) {
     const url = new URL(req.url, requestOrigin(req));
     const route = url.pathname.replace(/^\/api\/?/, '').replace(/^\/+|\/+$/g, '');
     const method = req.method;
-    if (!['GET','POST'].includes(method)) fail(405, 'Bu amal qo‘llab-quvvatlanmaydi.');
+    if (!['GET','POST','DELETE'].includes(method)) fail(405, 'Bu amal qo‘llab-quvvatlanmaydi.');
     if (method !== 'GET') {
       const origin = req.headers.origin;
       if (origin && ![requestOrigin(req), publicBase(req)].includes(origin)) fail(403, 'Bu manzildan so‘rov yuborish mumkin emas.');
       if (req.headers['sec-fetch-site'] === 'cross-site') fail(403, 'So‘rov manzili tasdiqlanmadi.');
     }
-    if (route !== 'district/institutions') fail(404, 'Sahifa topilmadi.');
+    if (route !== 'district/institutions' && route !== 'district/departments' && !/^district\/departments\/[a-f0-9]{24}\/doctors$/.test(route) && !/^district\/doctors\/[a-f0-9]{24}$/.test(route)) fail(404, 'Sahifa topilmadi.');
 
     const db = await database();
     const auth = await districtSession(db, req, method !== 'GET');
 
+
+    // Hudud foydalanuvchisi faqat o‘z hududidagi muassasa bo‘limlarini boshqaradi.
+    if (route === 'district/departments') {
+      if (method === 'GET') {
+        const rows = await db.all(sql`SELECT d.id, d.institution_id, d.name, i.name AS institution_name, i.district
+          FROM medical_departments d JOIN institutions i ON i.id=d.institution_id
+          WHERE i.district=${auth.district} ORDER BY i.name,d.name`);
+        const doctors = await db.all(sql`SELECT p.id,p.department_id,p.full_name,p.specialty
+          FROM medical_doctors p JOIN medical_departments d ON d.id=p.department_id
+          JOIN institutions i ON i.id=d.institution_id WHERE i.district=${auth.district}
+          ORDER BY p.full_name`);
+        const institutions = await db.all(sql`SELECT id,name FROM institutions WHERE district=${auth.district} AND active=1 ORDER BY name`);
+        return json(res,200,{district:auth.district,institutions,departments:rows.map(d=>({...d,doctors:doctors.filter(p=>p.department_id===d.id)}))});
+      }
+      if (method !== 'POST') fail(405,'Ruxsat etilmagan amal.');
+      const data=await body(req);
+      const institutionId=field(data.institutionId,'Muassasa',5,70);
+      const name=field(data.name,'Bo‘lim nomi',2,160);
+      const [owned]=await db.all(sql`SELECT id FROM institutions WHERE id=${institutionId} AND district=${auth.district} AND active=1`);
+      if(!owned) fail(403,'Muassasa sizning hududingizga tegishli emas.');
+      const [duplicate]=await db.all(sql`SELECT id FROM medical_departments WHERE institution_id=${institutionId} AND lower(name)=lower(${name})`);
+      if(duplicate) fail(409,'Ushbu bo‘lim avval qo‘shilgan.');
+      const [created]=await db.all(sql`INSERT INTO medical_departments(id,institution_id,name,created_at)
+        VALUES(${randomBytes(12).toString('hex')},${institutionId},${name},${isoNow()}) RETURNING id`);
+      return json(res,201,{ok:true,id:created.id});
+    }
+    const doctorRoute=route.match(/^district\/departments\/([a-f0-9]{24})\/doctors$/);
+    if(doctorRoute){
+      if(method!=='POST') fail(405,'Ruxsat etilmagan amal.');
+      const data=await body(req);
+      const fullName=field(data.fullName,'Shifokor F.I.Sh.',3,160);
+      const specialty=field(data.specialty??'','Mutaxassislik',0,120);
+      const departmentId=doctorRoute[1];
+      const [owned]=await db.all(sql`SELECT d.id FROM medical_departments d JOIN institutions i ON i.id=d.institution_id
+        WHERE d.id=${departmentId} AND i.district=${auth.district} AND i.active=1`);
+      if(!owned)fail(403,'Bo‘lim sizning hududingizga tegishli emas.');
+      const [duplicate]=await db.all(sql`SELECT id FROM medical_doctors WHERE department_id=${departmentId} AND lower(full_name)=lower(${fullName})`);
+      if(duplicate)fail(409,'Ushbu shifokor ro‘yxatda bor.');
+      const [created]=await db.all(sql`INSERT INTO medical_doctors(id,department_id,full_name,specialty,created_at)
+        VALUES(${randomBytes(12).toString('hex')},${departmentId},${fullName},${specialty},${isoNow()}) RETURNING id`);
+      return json(res,201,{ok:true,id:created.id});
+    }
+    const deleteDoctor=route.match(/^district\/doctors\/([a-f0-9]{24})$/);
+    if(deleteDoctor){
+      if(method!=='DELETE')fail(405,'Ruxsat etilmagan amal.');
+      const id=deleteDoctor[1];
+      const rows=await db.all(sql`DELETE FROM medical_doctors WHERE id=${id}
+        AND department_id IN (SELECT d.id FROM medical_departments d
+          JOIN institutions i ON i.id=d.institution_id WHERE i.district=${auth.district}) RETURNING id`);
+      if(!rows.length)fail(404,'Shifokor topilmadi yoki huquqingiz yetarli emas.');
+      return json(res,200,{ok:true});
+    }
     if (method === 'GET') {
       const rows = await db.all(sql`SELECT * FROM institutions WHERE district=${auth.district} ORDER BY active DESC, created_at DESC, name`);
       return json(res, 200, { district: auth.district, institutions: rows.filter(row => ['OP','OSHP'].includes(typeOf(row.name))).map(row => present(row, req)) });
