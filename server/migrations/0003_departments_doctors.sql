@@ -15,3 +15,5 @@ CREATE TABLE IF NOT EXISTS medical_doctors (
 CREATE UNIQUE INDEX IF NOT EXISTS uq_medical_doctor_name ON medical_doctors(department_id, lower(full_name));
 CREATE INDEX IF NOT EXISTS idx_medical_departments_institution ON medical_departments(institution_id);
 CREATE INDEX IF NOT EXISTS idx_medical_doctors_department ON medical_doctors(department_id);
+
+ALTER TABLE feedbacks ADD COLUMN department_id TEXT;
