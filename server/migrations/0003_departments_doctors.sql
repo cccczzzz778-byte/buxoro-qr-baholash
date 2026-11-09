@@ -1,13 +1,13 @@
 CREATE TABLE IF NOT EXISTS medical_departments (
-  id BIGSERIAL PRIMARY KEY,
+  id TEXT PRIMARY KEY,
   institution_id TEXT NOT NULL REFERENCES institutions(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   created_at TEXT NOT NULL
 );
 CREATE UNIQUE INDEX IF NOT EXISTS uq_medical_department_name ON medical_departments(institution_id, lower(name));
 CREATE TABLE IF NOT EXISTS medical_doctors (
-  id BIGSERIAL PRIMARY KEY,
-  department_id BIGINT NOT NULL REFERENCES medical_departments(id) ON DELETE CASCADE,
+  id TEXT PRIMARY KEY,
+  department_id TEXT NOT NULL REFERENCES medical_departments(id) ON DELETE CASCADE,
   full_name TEXT NOT NULL,
   specialty TEXT NOT NULL DEFAULT '',
   created_at TEXT NOT NULL
