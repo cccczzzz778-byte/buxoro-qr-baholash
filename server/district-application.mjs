@@ -111,7 +111,7 @@ export default async function districtApplication(req, res) {
       if (origin && ![requestOrigin(req), publicBase(req)].includes(origin)) fail(403, 'Bu manzildan so‘rov yuborish mumkin emas.');
       if (req.headers['sec-fetch-site'] === 'cross-site') fail(403, 'So‘rov manzili tasdiqlanmadi.');
     }
-    if (route !== 'district/institutions' && route !== 'district/departments' && !/^district\/departments\/[0-9]+\/doctors$/.test(route) && !/^district\/doctors\/[0-9]+$/.test(route)) fail(404, 'Sahifa topilmadi.');
+    if (route !== 'district/institutions' && route !== 'district/departments' && !/^district\/departments\/[a-f0-9]{24}\/doctors$/.test(route) && !/^district\/doctors\/[a-f0-9]{24}$/.test(route)) fail(404, 'Sahifa topilmadi.');
 
     const db = await database();
     const auth = await districtSession(db, req, method !== 'GET');
@@ -128,7 +128,7 @@ export default async function districtApplication(req, res) {
           JOIN institutions i ON i.id=d.institution_id WHERE i.district=${auth.district}
           ORDER BY p.full_name`);
         const institutions = await db.all(sql`SELECT id,name FROM institutions WHERE district=${auth.district} AND active=1 ORDER BY name`);
-        return json(res,200,{district:auth.district,institutions,departments:rows.map(d=>({...d,doctors:doctors.filter(p=>Number(p.department_id)===Number(d.id))}))});
+        return json(res,200,{district:auth.district,institutions,departments:rows.map(d=>({...d,doctors:doctors.filter(p=>p.department_id===d.id)}))});
       }
       if (method !== 'POST') fail(405,'Ruxsat etilmagan amal.');
       const data=await body(req);
@@ -138,30 +138,30 @@ export default async function districtApplication(req, res) {
       if(!owned) fail(403,'Muassasa sizning hududingizga tegishli emas.');
       const [duplicate]=await db.all(sql`SELECT id FROM medical_departments WHERE institution_id=${institutionId} AND lower(name)=lower(${name})`);
       if(duplicate) fail(409,'Ushbu bo‘lim avval qo‘shilgan.');
-      const [created]=await db.all(sql`INSERT INTO medical_departments(institution_id,name,created_at)
-        VALUES(${institutionId},${name},${isoNow()}) RETURNING id`);
+      const [created]=await db.all(sql`INSERT INTO medical_departments(id,institution_id,name,created_at)
+        VALUES(${randomBytes(12).toString('hex')},${institutionId},${name},${isoNow()}) RETURNING id`);
       return json(res,201,{ok:true,id:created.id});
     }
-    const doctorRoute=route.match(/^district\/departments\/([0-9]+)\/doctors$/);
+    const doctorRoute=route.match(/^district\/departments\/([a-f0-9]{24})\/doctors$/);
     if(doctorRoute){
       if(method!=='POST') fail(405,'Ruxsat etilmagan amal.');
       const data=await body(req);
       const fullName=field(data.fullName,'Shifokor F.I.Sh.',3,160);
       const specialty=field(data.specialty??'','Mutaxassislik',0,120);
-      const departmentId=Number(doctorRoute[1]);
+      const departmentId=doctorRoute[1];
       const [owned]=await db.all(sql`SELECT d.id FROM medical_departments d JOIN institutions i ON i.id=d.institution_id
         WHERE d.id=${departmentId} AND i.district=${auth.district} AND i.active=1`);
       if(!owned)fail(403,'Bo‘lim sizning hududingizga tegishli emas.');
       const [duplicate]=await db.all(sql`SELECT id FROM medical_doctors WHERE department_id=${departmentId} AND lower(full_name)=lower(${fullName})`);
       if(duplicate)fail(409,'Ushbu shifokor ro‘yxatda bor.');
-      const [created]=await db.all(sql`INSERT INTO medical_doctors(department_id,full_name,specialty,created_at)
-        VALUES(${departmentId},${fullName},${specialty},${isoNow()}) RETURNING id`);
+      const [created]=await db.all(sql`INSERT INTO medical_doctors(id,department_id,full_name,specialty,created_at)
+        VALUES(${randomBytes(12).toString('hex')},${departmentId},${fullName},${specialty},${isoNow()}) RETURNING id`);
       return json(res,201,{ok:true,id:created.id});
     }
-    const deleteDoctor=route.match(/^district\/doctors\/([0-9]+)$/);
+    const deleteDoctor=route.match(/^district\/doctors\/([a-f0-9]{24})$/);
     if(deleteDoctor){
       if(method!=='DELETE')fail(405,'Ruxsat etilmagan amal.');
-      const id=Number(deleteDoctor[1]);
+      const id=deleteDoctor[1];
       const rows=await db.all(sql`DELETE FROM medical_doctors WHERE id=${id}
         AND department_id IN (SELECT d.id FROM medical_departments d
           JOIN institutions i ON i.id=d.institution_id WHERE i.district=${auth.district}) RETURNING id`);
